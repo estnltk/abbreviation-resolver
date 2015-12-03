@@ -1,0 +1,16 @@
+*.pyc
+.project
+.settings
+.pydevproject
+*.log
+*.csv
+*.egg-info
+bin/
+lib/
+eggs/
+develop-eggs/
+share/
+lib64/
+lib64/
+lib64
+tools

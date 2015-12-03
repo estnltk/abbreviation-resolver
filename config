@@ -1,0 +1,4 @@
+[MODEL]
+ABBREVIATION_MODEL=/opt/home/sass/projects/lyhendid/tasks/model/results/model.csv
+WORD2VEC_MODEL=/opt/home/sass/projects/lyhendid/tasks/etl/results/word2vec/lemma/pubmed.lem.snts.wvm
+
