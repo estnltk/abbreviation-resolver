@@ -83,12 +83,12 @@ Now abbreviation resolver is ready for use:
 
 A call to `tokenize_abs()` creates a new layer 'abr' in a Text object,
 which contains analysis information for each abbreviation or acronym identified in text.
-Analysis entry includes abbreviation text itself,  its start and end position in a document,
+Analysis entry includes abbreviation text itself, its start and end position in the document,
 a list of candidate full forms with the corresponding scores.
 The candidate terms are sorted by score, such that the most likely candidate 
 with a higher score comes first.
 
-These attributes can be accessed individually using corresponding properties:
+These attributes can be accessed individually using the corresponding properties:
 ```python
 >> t = Text(u'püsib p pahhüpleuraalne ladestus. kolmas p palavik')
 >> t.abr_texts
@@ -121,7 +121,7 @@ Abbreviation resolver requires two datafiles - *abbreviation model* and *word2ve
 Abbreviation model provides probabilities P(term|abbreviation) which were estimated based on a training corpus.
 The model is stored in a .csv file with columns term, abbreviation, and P(term|abbreviation), e.g.
 
-| t             | a             | P(t\|a)  |
+| t             | a             | P(t&#124;a)|
 | ------------- |:-------------:| --------:|
 | temperatuur   | t             | 0.383632 |
 | tund          | t             | 0.242967 |
