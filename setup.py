@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import sys, os
 
 
 setup(name='abbreviation-resolver',
@@ -11,11 +10,11 @@ setup(name='abbreviation-resolver',
       include_package_data=True,
       install_requires=[
         'estnltk==1.3',
-        'numpy>=1.10.1',
+        'numpy==1.10.1',
         'pandas==0.16.2',
         'cached_property==1.2.0',
-        'scipy',
-        'gensim',
+        'gensim==0.12.3',
+        'six==1.9.0'
       ],
-      entry_points={"console_scripts": ["test_text=abresolver.scripts.test_text:main"]},
+      entry_points={"console_scripts": ["test_text=abresolver.tests.test:main"]},
 )

@@ -1,21 +1,58 @@
-# -*- coding: utf8 -*-
+# -*- coding: UTF-8 -*-
+"""
+The class Text extends estnltk's class Text and adds abbreviation layer.
+
+Usage:
+    
+    >> from abresolver import Text
+    >> t = Text(u'kolmas p palavik')
+    >> t.tokenize_abs()
+    [{
+      'text': 'p',
+      'start': 7,
+      'end': 8,
+      'expansions': ['päev',
+                     'parem',
+                     'parietaalne',
+                     'pupill',
+                     'pool'],
+      'scores': [0.99974249284129602,
+                 0.00013896032431022265,
+                 0.00010385371199489893,
+                 9.3145225880433136e-06,
+                 5.3785998108879645e-06],
+      }]
+"""
 import logging
 
 import pandas as pd
 from estnltk import Text as EstnltkText
+from estnltk.names import START, END, TEXT
+from cached_property import cached_property
 
 from . import config
-from . abmodel import Model as AbbreviationModel
-from . word2vec import Word2VecContextModel, Word2VecMockContextModel
-from . abdisambiguation import Word2VecDisambiguator
+from .abmodel import Model as AbbreviationModel
+from .word2vec import Word2VecContextModel
+from .abdisambiguation import Word2VecDisambiguator
 
 
 log = logging.getLogger(__name__)
-ABR = 'abr'
 config = config.Config()
-ab_disambiguator = Word2VecDisambiguator(
+ab_disambiguator = None
+
+ABR = 'abr'
+EXPANSIONS = 'expansions'
+SCORES = 'scores'
+
+
+def get_disambiguator():
+    global ab_disambiguator
+    if ab_disambiguator is None:
+        log.debug('Loading models...')
+        ab_disambiguator = Word2VecDisambiguator(
                        AbbreviationModel(pd.read_csv(config.ABBREVIATION_MODEL, encoding='utf8')),
                        Word2VecContextModel(config.WORD2VEC_MODEL))
+    return ab_disambiguator
 
 
 class Text(EstnltkText):
@@ -68,23 +105,39 @@ class Text(EstnltkText):
         """The list of end positions representing `abr` layer elements."""
         if not self.is_tagged(ABR):
             self.tokenize_abr()
-        return self.ends(ABRs)
+        return self.ends(ABR)
     
     
+    @cached_property
+    def abr_expansions(self):
+        if not self.is_tagged(ABR):
+            self.tokenize_abr()
+        return [item[EXPANSIONS] for item in self[ABR]]
+    
+    
+    @cached_property
+    def abr_scores(self):
+        if not self.is_tagged(ABR):
+            self.tokenize_abr()
+        return [item[SCORES] for item in self[ABR]]
+    
+       
     def tokenize_abr(self):
-        """ Add `abr`-layer annontations."""
-        dicts = []
-        for snt in self.split_by_sentences():
+        """ Add `abr`-layer annotations."""
+        items = []
+        for snt, snt_start in zip(self.split_by_sentences(), self.sentence_starts):
             snt_words = [w.lower() for w in snt.word_texts]
             for i, w in enumerate(snt.words):
-                expansions, context_fitness = ab_disambiguator.process(snt_words, i)
+                expansions, context_fitness = get_disambiguator().process(snt_words, i)
                 if expansions:
-                    dicts.append({START:             w[START], 
-                                  END:               w[END],
-                                  TEXT:              w[TEXT],
-                                  'expansions':      expansions,
-                                  'context_fitness': context_fitness})
-        text[ABR] = dicts
+                    items.append({START:      snt_start + w[START], 
+                                  END:        snt_start + w[END],
+                                  TEXT:       w[TEXT],
+                                  EXPANSIONS: [e.term for e in expansions],
+                                  SCORES:     [e.score for e in expansions],
+                                  })
+        self[ABR] = items
+        return items
         
     
     

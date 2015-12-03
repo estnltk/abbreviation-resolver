@@ -1,10 +1,11 @@
+# -*- coding: UTF-8 -*-
 import re
+import random
+from bisect import bisect_right
 
 import gensim
 import six
 import numpy as np
-import random
-from bisect import bisect_right
 from numpy import exp, log, prod, dot
 
 

@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 class BaseModel(object):
     """ Wrapper over the model P(t|a) """
     

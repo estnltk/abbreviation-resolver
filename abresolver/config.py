@@ -1,15 +1,11 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 import os
 import sys
-from ConfigParser import ConfigParser
+from six.moves.configparser import ConfigParser
 
 
 class Config(object):
     
-    #PROJECT_HOME = '/opt/home/sass/projects/lyhendid'
-    #ABBREVIATION_MODEL = os.path.join(PROJECT_HOME, 'tasks/model/results/model.csv')
-    #WORD2VEC_MODEL = os.path.join(PROJECT_HOME, 'data/corpus/rontgen_and_anamnees/corpus.t3.word.wvm')
-    #WORD2VEC_MODEL = os.path.join(PROJECT_HOME, 'tasks/etl/results/word2vec_training_data/all.snts.word.wvm')
     
     def __init__(self):
         config_file = os.environ.get('CONFIG')
